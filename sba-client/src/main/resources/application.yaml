@@ -1,0 +1,92 @@
+## INFO ENDPOINT
+## Aqui configuramos as informações sobre o sistema, como nome, descrição, versão e etc.
+info:
+  name: Spring Boot Admin Client
+  description: Sistema Cliente
+  version: @project.version@
+
+server:
+  port: 8080
+  servlet:
+    context-path: /admin-client
+
+spring:
+  # Configuração básica do Spring Security.
+  security:
+    user:
+      name: ${SBA_CLIENT_USERNAME}
+      password: ${SBA_CLIENT_PASSWORD}
+  boot:
+    admin:
+      client:
+        enabled: true
+        # URL do servidor que o cliente deve se registrar.
+        url: http://localhost:8081/admin-console
+        username: ${SBA_SERVER_USERNAME}
+        password: ${SBA_SERVER_PASSWORD}
+        instance:
+          # URL base para calcular o service-url com o qual se registrar. O caminho é inferido em tempo de execução e anexado à url base.
+          service-base-url: http://localhost:8080
+          # Essas informações são passadas ao servidor para que ele possa fazer o acesso aos endpoints do sistema cliente.
+          metadata:
+            user:
+              name: ${SBA_SERVER_USERNAME}
+              password: ${SBA_SERVER_PASSWORD}
+        auto-deregistration: true
+
+## APP
+app:
+  cors-origins:
+    - http://localhost
+  cors-methods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+    - OPTIONS
+  cors-headers:
+    - Authorization
+    - Content-Type
+    - Content-Length
+    - X-Requested-With
+
+## ACTUATOR
+management:
+  info:
+    env:
+      # Desde o Spring Boot 2.6, o env info é desabilitado por padrão.
+      enabled: true
+  endpoint:
+    health:
+      show-details: ALWAYS
+      enabled: true
+    shutdown:
+      enabled: true
+    logfile:
+      enabled: true
+      external-file: logs/client.log
+  endpoints:
+    web:
+      exposure:
+        # Liberamos todos os endpoints, mas lembre-se, em produção não se deve fazer isso.
+        include: "*"
+      cors:
+        allowed-headers: ${app.cors-headers}
+        allowed-methods: ${app.cors-methods}
+        allowed-origins: ${app.cors-origins}
+
+## LOG
+logging:
+  file:
+    name: logs/client.log
+    path: logs
+  level:
+    root: info
+    web: info
+    dev.marksduarte: info
+  charset:
+    file: utf-8
+  logback:
+    rollingpolicy:
+      clean-history-on-start: true
+      max-file-size: 10MB

@@ -1,0 +1,42 @@
+## INFO ENDPOINT
+info:
+  name: Spring Boot Admin Server
+  description: Sistema de Monitoramento
+  version: @project.version@
+
+server:
+  port: 8081
+  servlet:
+    context-path: /admin-console
+
+spring:
+  security:
+    user:
+      name: ${SBA_SERVER_USERNAME}
+      password: ${SBA_SERVER_PASSWORD}
+  boot:
+    admin:
+      client:
+        # Necessários para que o cliente possa se registrar na api do servidor protegido.
+        username: ${SBA_SERVER_USERNAME}
+        password: ${SBA_SERVER_PASSWORD}
+        instance:
+          metadata:
+            user:
+              # Necessários para que o servidor possa acessar os endpoints protegidos do cliente.
+              name: ${SBA_CLIENT_USERNAME}
+              password: ${SBA_CLIENT_PASSWORD}
+  profiles:
+    active: prod
+
+# LOG
+logging:
+  file:
+    name: ${user.home}/logs/admin/spring-boot-admin.log
+  level:
+    root: info
+    web: info
+    dev.marksduarte: info
+    org.springframework: info
+  charset:
+    file: utf-8
